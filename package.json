@@ -5,7 +5,8 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "lint": "npm run lint -w apps"
+    "lint": "npm run lint -w apps",
+    "build": "npm run build -w apps"
   },
   "keywords": [],
   "author": "",
