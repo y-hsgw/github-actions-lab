@@ -9,12 +9,13 @@
   "scripts": {
     "start": "nest start",
     "start:dev": "nest start --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.4",
     "@nestjs/platform-fastify": "^11.0.10",
     "@nestjs/schematics": "^11.0.1",
+    "@repo/eslint-config": "^1.0.0",
     "@types/node": "^22.13.4",
     "eslint": "^9.20.1",
     "typescript": "^5.7.3",

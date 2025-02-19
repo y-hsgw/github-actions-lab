@@ -13,4 +13,6 @@ async function bootstrap() {
   await app.listen({ port: 8080 });
 }
 
-bootstrap();
+bootstrap().catch((err: unknown) => {
+  console.error("Error during bootstrap:", err);
+});

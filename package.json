@@ -13,7 +13,8 @@
   "type": "module",
   "workspaces": [
     "docs",
-    "apps/*"
+    "apps/*",
+    "packages/*"
   ],
   "devDependencies": {
     "@vitest/coverage-v8": "^3.0.6",
