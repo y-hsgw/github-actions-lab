@@ -43,6 +43,7 @@ jobs:
       - name: Detect changed files
         id: detect_changes
         run: |
+          git fetch origin main
           web_changed=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E '^apps/web/' || echo "")
           api_changed=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E '^apps/api/' || echo "")
           echo "web_changed=${web_changed}" >> $GITHUB_ENV
