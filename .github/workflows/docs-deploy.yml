@@ -5,21 +5,21 @@ on:
     branches:
       - main
 
-defaults:
-  run:
-    shell: bash
-    working-directory: ./docs
 jobs:
   build:
     name: Build Docusaurus
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./docs
+
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
@@ -30,7 +30,7 @@ jobs:
       - name: Upload Build Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: build
+          path: ./docs/build
 
   deploy:
     name: Deploy to GitHub Pages
