@@ -45,8 +45,8 @@ jobs:
       - name: Detect changed files
         id: detect_changes
         run: |
-          web_changed=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E '^apps/web/' || echo "")
-          api_changed=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E '^apps/api/' || echo "")
+          web_changed=$(git diff --name-only origin/main...HEAD | grep -E '^apps/web/' || echo "")
+          api_changed=$(git diff --name-only origin/main...HEAD | grep -E '^apps/api/' || echo "")
           echo "web_changed=${web_changed}" >> $GITHUB_ENV
           echo "api_changed=${api_changed}" >> $GITHUB_ENV
 
@@ -70,7 +70,7 @@ jobs:
       - name: Run build
         run: npm run build -w apps/api
 
-  lint-api:
+  api-ci:
     needs: setup
     runs-on: ubuntu-latest
     if: ${{ needs.setup.outputs.api_changed != '' }}
