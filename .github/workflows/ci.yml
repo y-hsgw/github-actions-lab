@@ -50,8 +50,17 @@ jobs:
           api_changed=$(git diff --name-only origin/main...HEAD | grep -E '^apps/api/' || echo "")
           web_changed_cleaned=$(echo "$web_changed" | tr -d '\n' | tr -d ' ')
           api_changed_cleaned=$(echo "$api_changed" | tr -d '\n' | tr -d ' ')
-          echo "web_changed=[\"$web_changed_cleaned\"]" >> $GITHUB_ENV
-          echo "api_changed=[\"$api_changed_cleaned\"]" >> $GITHUB_ENV
+          if [ -n "$web_changed_cleaned" ]; then
+            echo "web_changed=[\"$web_changed_cleaned\"]" >> $GITHUB_ENV
+          else
+            echo "web_changed=[]" >> $GITHUB_ENV
+          fi
+
+          if [ -n "$api_changed_cleaned" ]; then
+            echo "api_changed=[\"$api_changed_cleaned\"]" >> $GITHUB_ENV
+          else
+            echo "api_changed=[]" >> $GITHUB_ENV
+          fi
 
   web-ci:
     needs: setup
