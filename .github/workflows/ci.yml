@@ -67,21 +67,8 @@ jobs:
           echo "web_changed=${web_changed}" >> $GITHUB_OUTPUT
           echo "api_changed=${api_changed}" >> $GITHUB_OUTPUT
 
-  debug:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Debug web_changed
-        run: 'echo "web_changed: ${{ needs.setup.outputs.web_changed }}"'
-      - name: Debug api_changed
-        run: 'echo "api_changed: ${{ needs.setup.outputs.api_changed }}"'
-
-  web-ci:
-    needs: setup
-    runs-on: ubuntu-latest
-    if: ${{ needs.setup.outputs.web_changed == 'true' }}
-    steps:
       - name: Cache Next.js build
+        if: ${{ steps.detect_changes.outputs.web_changed == 'true' }}
         id: cache-next
         uses: actions/cache@v4
         with:
@@ -91,18 +78,22 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
       - name: Lint web
-        run: npm run lint -w apps/web
+        if: ${{ steps.detect_changes.outputs.web_changed == 'true' }}
+        run: |
+          npm run lint -w apps/web
+          npm run build -w apps/web
 
-      - name: Run build
-        run: npm run build -w apps/api
+      - name: Lint api
+        if: ${{ steps.detect_changes.outputs.api_changed == 'true' }}
+        run: |
+          npm run lint -w apps/api
+          npm run build -w apps/api
 
-  api-ci:
+  debug:
     needs: setup
     runs-on: ubuntu-latest
-    if: ${{ needs.setup.outputs.api_changed == 'true' }}
     steps:
-      - name: Lint api
-        run: npm run lint -w apps/api
-
-      - name: Run build
-        run: npm run build -w apps/api
+      - name: Debug web_changed
+        run: 'echo "web_changed: ${{ needs.setup.outputs.web_changed }}"'
+      - name: Debug api_changed
+        run: 'echo "api_changed: ${{ needs.setup.outputs.api_changed }}"'
