@@ -14,6 +14,8 @@ jobs:
       api_changed: ${{ steps.detect_changes.outputs.api_changed }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: "22.*"
@@ -43,7 +45,6 @@ jobs:
       - name: Detect changed files
         id: detect_changes
         run: |
-          git fetch origin main
           web_changed=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E '^apps/web/' || echo "")
           api_changed=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E '^apps/api/' || echo "")
           echo "web_changed=${web_changed}" >> $GITHUB_ENV
