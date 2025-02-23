@@ -67,10 +67,19 @@ jobs:
           echo "web_changed=${web_changed}" >> "$GITHUB_ENV"
           echo "api_changed=${api_changed}" >> "$GITHUB_ENV"
 
+  debug:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug web_changed
+        run: 'echo "web_changed: ${{ needs.setup.outputs.web_changed }}"'
+      - name: Debug api_changed
+        run: 'echo "api_changed: ${{ needs.setup.outputs.api_changed }}"'
+
   web-ci:
     needs: setup
     runs-on: ubuntu-latest
-    if: ${{ needs.detect_changes.outputs.web_changed == 'true' }}
+    if: ${{ needs.setup.outputs.web_changed == 'true' }}
     steps:
       - name: Cache Next.js build
         id: cache-next
@@ -90,7 +99,7 @@ jobs:
   api-ci:
     needs: setup
     runs-on: ubuntu-latest
-    if: ${{ needs.detect_changes.outputs.api_changed == 'true' }}
+    if: ${{ needs.setup.outputs.api_changed == 'true' }}
     steps:
       - name: Lint api
         run: npm run lint -w apps/api
