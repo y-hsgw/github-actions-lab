@@ -45,6 +45,7 @@ jobs:
       - name: Detect changed files
         id: detect_changes
         run: |
+          git fetch origin
           web_changed=$(git diff --name-only origin/main...HEAD | grep -E '^apps/web/' || echo "")
           api_changed=$(git diff --name-only origin/main...HEAD | grep -E '^apps/api/' || echo "")
           web_changed_cleaned=$(echo "$web_changed" | tr -d '\n' | tr -d ' ')
