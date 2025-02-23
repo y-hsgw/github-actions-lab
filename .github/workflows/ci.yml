@@ -47,7 +47,18 @@ jobs:
         run: |
           # mainブランチ（またはデフォルトブランチ）と現在のコミット（HEAD）との差分を取得
           web_changed=$(git diff --name-only origin/main...HEAD | grep -E '^apps/web/' || echo "")
+          if [ -n "$web_changed" ]; then
+            web_changed="true"
+          else
+            web_changed="false"
+          fi
+
           api_changed=$(git diff --name-only origin/main...HEAD | grep -E '^apps/api/' || echo "")
+          if [ -n "$api_changed" ]; then
+            api_changed="true"
+          else
+            api_changed="false"
+          fi
 
           echo "web_changed: ${web_changed}"
           echo "api_changed: ${api_changed}"
@@ -59,7 +70,7 @@ jobs:
   web-ci:
     needs: setup
     runs-on: ubuntu-latest
-    if: ${{ needs.setup.outputs.web_changed != '' }}
+    if: ${{ needs.setup.outputs.web_changed == 'true' }}
     steps:
       - name: Cache Next.js build
         id: cache-next
@@ -79,7 +90,7 @@ jobs:
   api-ci:
     needs: setup
     runs-on: ubuntu-latest
-    if: ${{ needs.setup.outputs.api_changed != '' }}
+    if: ${{ needs.setup.outputs.api_changed == 'true' }}
     steps:
       - name: Lint api
         run: npm run lint -w apps/api
