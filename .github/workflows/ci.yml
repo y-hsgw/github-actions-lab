@@ -64,8 +64,8 @@ jobs:
           echo "api_changed: ${api_changed}"
 
            # 変更があった場合に環境変数に設定
-          echo "web_changed=${web_changed}" >> "$GITHUB_ENV"
-          echo "api_changed=${api_changed}" >> "$GITHUB_ENV"
+          echo "web_changed=${web_changed}" >> $GITHUB_ENV
+          echo "api_changed=${api_changed}" >> $GITHUB_ENV
 
   debug:
     needs: setup
