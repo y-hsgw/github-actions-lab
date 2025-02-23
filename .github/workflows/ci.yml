@@ -40,7 +40,7 @@ jobs:
         run: npm ci
 
       - name: Detect changed files
-        id: detect_changes
+        id: detect-changes
         run: |
           # mainブランチ（またはデフォルトブランチ）と現在のコミット（HEAD）との差分を取得
           web_changed=$(git diff --name-only origin/main...HEAD | grep -E '^apps/web/' || echo "")
@@ -58,7 +58,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Cache Next.js build
-        if: ${{ steps.detect_changes.outputs.web_changed != '' }}
+        if: ${{ steps.detect-changes.outputs.web_changed != '' }}
         id: cache-next
         uses: actions/cache@v4
         with:
@@ -67,14 +67,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
-      - name: Lint web
-        if: ${{ steps.detect_changes.outputs.web_changed != '' }}
+      - name: Full Validation for Web
+        if: ${{ steps.detect-changes.outputs.web_changed != '' }}
         run: |
           npm run lint -w apps/web
           npm run build -w apps/web
 
-      - name: Lint api
-        if: ${{ steps.detect_changes.outputs.api_changed != '' }}
+      - name: Full Validation for Api
+        if: ${{ steps.detect-changes.outputs.api_changed != '' }}
         run: |
           npm run lint -w apps/api
           npm run build -w apps/api
