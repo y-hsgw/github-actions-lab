@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  CI:
+  setup:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,6 +29,19 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
+      - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
+        name: List the state of node modules
+        continue-on-error: true
+        run: npm list
+
+      - name: Install dependencies
+        run: npm ci
+
+  web-ci:
+    needs: setup
+    runs-on: ubuntu-latest
+    if: ${{ needs.setup.outputs.web_changed != '' }}
+    steps:
       - name: Cache Next.js build
         id: cache-next
         uses: actions/cache@v4
@@ -38,16 +51,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
-      - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
-        name: List the state of node modules
-        continue-on-error: true
-        run: npm list
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run lint
-        run: npm run lint
+      - name: Lint web
+        run: npm run lint -w apps/web
 
       - name: Run build
-        run: npm run build
+        run: npm run build -w apps/api
+
+  lint-api:
+    needs: setup
+    runs-on: ubuntu-latest
+    if: ${{ needs.setup.outputs.api_changed != '' }}
+    steps:
+      - name: Lint api
+        run: npm run lint -w apps/api
+
+      - name: Run build
+        run: npm run build -w apps/api
