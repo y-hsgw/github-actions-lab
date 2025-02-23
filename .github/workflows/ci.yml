@@ -9,6 +9,9 @@ on:
 jobs:
   setup:
     runs-on: ubuntu-latest
+    outputs:
+      web_changed: ${{ steps.detect_changes.outputs.web_changed }}
+      api_changed: ${{ steps.detect_changes.outputs.api_changed }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -36,6 +39,14 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Detect changed files
+        id: detect_changes
+        run: |
+          web_changed=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E '^apps/web/' || echo "")
+          api_changed=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E '^apps/api/' || echo "")
+          echo "web_changed=${web_changed}" >> $GITHUB_ENV
+          echo "api_changed=${api_changed}" >> $GITHUB_ENV
 
   web-ci:
     needs: setup
