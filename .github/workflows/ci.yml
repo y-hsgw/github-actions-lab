@@ -45,30 +45,14 @@ jobs:
       - name: Detect changed files
         id: detect_changes
         run: |
-          # mainブランチ（またはデフォルトブランチ）と現在のコミット（HEAD）との差分を取得
-          web_changed=$(git diff --name-only origin/main...HEAD | grep -E '^apps/web/' || echo "")
-          if [ -n "$web_changed" ]; then
-            web_changed="true"
-          else
-            web_changed="false"
-          fi
-
-          api_changed=$(git diff --name-only origin/main...HEAD | grep -E '^apps/api/' || echo "")
-          if [ -n "$api_changed" ]; then
-            api_changed="true"
-          else
-            api_changed="false"
-          fi
+          echo "web_changed=$(git diff --name-only origin/main...HEAD | grep -E '^apps/web/' || echo "")" >> $GITHUB_OUTPUT
+          echo "api_changed=$(git diff --name-only origin/main...HEAD | grep -E '^apps/api/' || echo "")" >> $GITHUB_OUTPUT
 
           echo "web_changed: ${web_changed}"
           echo "api_changed: ${api_changed}"
 
-           # 変更があった場合に環境変数に設定
-          echo "web_changed=${web_changed}" >> $GITHUB_OUTPUT
-          echo "api_changed=${api_changed}" >> $GITHUB_OUTPUT
-
       - name: Cache Next.js build
-        if: ${{ steps.detect_changes.outputs.web_changed == 'true' }}
+        if: ${{ steps.detect_changes.outputs.web_changed != '' }}
         id: cache-next
         uses: actions/cache@v4
         with:
@@ -78,22 +62,13 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
       - name: Lint web
-        if: ${{ steps.detect_changes.outputs.web_changed == 'true' }}
+        if: ${{ steps.detect_changes.outputs.web_changed != '' }}
         run: |
           npm run lint -w apps/web
           npm run build -w apps/web
 
       - name: Lint api
-        if: ${{ steps.detect_changes.outputs.api_changed == 'true' }}
+        if: ${{ steps.detect_changes.outputs.api_changed != '' }}
         run: |
           npm run lint -w apps/api
           npm run build -w apps/api
-
-  debug:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Debug web_changed
-        run: 'echo "web_changed: ${{ needs.setup.outputs.web_changed }}"'
-      - name: Debug api_changed
-        run: 'echo "api_changed: ${{ needs.setup.outputs.api_changed }}"'
