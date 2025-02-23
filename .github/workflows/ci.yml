@@ -70,7 +70,7 @@ jobs:
   web-ci:
     needs: setup
     runs-on: ubuntu-latest
-    if: ${{ needs.setup.outputs.web_changed == 'true' }}
+    if: ${{ steps.detect_changes.web_changed == 'true' }}
     steps:
       - name: Cache Next.js build
         id: cache-next
@@ -90,7 +90,7 @@ jobs:
   api-ci:
     needs: setup
     runs-on: ubuntu-latest
-    if: ${{ needs.setup.outputs.api_changed == 'true' }}
+    if: ${{ steps.detect_changes.api_changed == 'true' }}
     steps:
       - name: Lint api
         run: npm run lint -w apps/api
