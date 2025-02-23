@@ -45,22 +45,16 @@ jobs:
       - name: Detect changed files
         id: detect_changes
         run: |
-          git fetch origin
+          # mainブランチ（またはデフォルトブランチ）と現在のコミット（HEAD）との差分を取得
           web_changed=$(git diff --name-only origin/main...HEAD | grep -E '^apps/web/' || echo "")
           api_changed=$(git diff --name-only origin/main...HEAD | grep -E '^apps/api/' || echo "")
-          web_changed_cleaned=$(echo "$web_changed" | tr -d '\n' | tr -d ' ')
-          api_changed_cleaned=$(echo "$api_changed" | tr -d '\n' | tr -d ' ')
-          if [ -n "$web_changed_cleaned" ]; then
-            echo "web_changed=[\"$web_changed_cleaned\"]" >> $GITHUB_ENV
-          else
-            echo "web_changed=[]" >> $GITHUB_ENV
-          fi
 
-          if [ -n "$api_changed_cleaned" ]; then
-            echo "api_changed=[\"$api_changed_cleaned\"]" >> $GITHUB_ENV
-          else
-            echo "api_changed=[]" >> $GITHUB_ENV
-          fi
+          echo "web_changed: ${web_changed}"
+          echo "api_changed: ${api_changed}"
+
+           # 変更があった場合に環境変数に設定
+          echo "web_changed=${web_changed}" >> $GITHUB_ENV
+          echo "api_changed=${api_changed}" >> $GITHUB_ENV
 
   web-ci:
     needs: setup
