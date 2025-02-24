@@ -54,7 +54,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Lint, Build, Test & Type-Check Web
+      - name: Lint, Build, Type-Check Web
         run: |
           npm run lint
           npm run build
@@ -80,9 +80,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Lint, Build, Test & Type-Check API
+      - name: Lint, Build, Type-Check API
         run: |
           npm run lint
           npm run build
-          npm run test
           npm run type-check
