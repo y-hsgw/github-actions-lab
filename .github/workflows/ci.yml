@@ -9,6 +9,9 @@ on:
 jobs:
   prepare:
     runs-on: ubuntu-latest
+    outputs:
+      web_changed: ${{ steps.detect_changes.outputs.web_changed }}
+      api_changed: ${{ steps.detect_changes.outputs.api_changed }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -26,6 +29,10 @@ jobs:
 
            echo "web_changed=${web_changed}" >> $GITHUB_OUTPUT
            echo "api_changed=${api_changed}" >> $GITHUB_OUTPUT
+
+          # デバッグ用
+          echo "web_changed: ${web_changed}"
+          echo "api_changed: ${api_changed}"
 
   web-ci:
     needs: prepare
