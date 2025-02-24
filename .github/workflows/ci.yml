@@ -37,7 +37,7 @@ jobs:
   web-ci:
     needs: prepare
     runs-on: ubuntu-latest
-    if: ${{ needs.prepare.outputs.web_changed == 'true' }}
+    if: ${{ needs.detect-changes.outputs.web_changed == 'true' }}
     defaults:
       run:
         working-directory: apps/web
@@ -63,7 +63,7 @@ jobs:
   api-ci:
     needs: prepare
     runs-on: ubuntu-latest
-    if: ${{ needs.prepare.outputs.api_changed == 'true' }}
+    if: ${{ needs.detect-changes.outputs.api_changed == 'true' }}
     defaults:
       run:
         working-directory: apps/api
