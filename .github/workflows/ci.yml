@@ -7,47 +7,81 @@ on:
     branches: [main]
 
 jobs:
-  CI:
+  prepare:
     runs-on: ubuntu-latest
+    outputs:
+      web_changed: ${{ steps.detect-changes.outputs.web_changed }}
+      api_changed: ${{ steps.detect-changes.outputs.api_changed }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
         with:
-          node-version: "22.*"
+          fetch-depth: 0
 
-      - name: Cache node modules
-        id: cache-npm
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-node-modules
+      - name: Detect changed files
+        id: detect-changes
+        run: |
+          if git diff --name-only origin/main...HEAD | grep -qE '^apps/web/'; then
+             web_changed="true"
+          fi
+          if git diff --name-only origin/main...HEAD | grep -qE '^apps/api/'; then
+            api_changed="true"
+          fi
+
+          echo "web_changed=${web_changed}" >> $GITHUB_OUTPUT
+          echo "api_changed=${api_changed}" >> $GITHUB_OUTPUT
+
+          # デバッグ用
+          echo "web_changed: ${web_changed}"
+          echo "api_changed: ${api_changed}"
+
+  web-ci:
+    needs: prepare
+    runs-on: ubuntu-latest
+    if: ${{ needs.prepare.outputs.web_changed == 'true' }}
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          # npm キャッシュファイルは、Linux/macOS では `~/.npm` に保存される。
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
-      - name: Cache Next.js build
-        id: cache-next
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/apps/web/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.ts', '**/*.tsx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
-
-      - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
-        name: List the state of node modules
-        continue-on-error: true
-        run: npm list
+          node-version: 22
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Run lint
-        run: npm run lint
+      - name: Lint, Build, Type-Check Web
+        run: |
+          npm run lint
+          npm run build
+          npm run type-check
 
-      - name: Run build
-        run: npm run build
+  api-ci:
+    needs: prepare
+    runs-on: ubuntu-latest
+    if: ${{ needs.prepare.outputs.api_changed == 'true' }}
+    defaults:
+      run:
+        working-directory: apps/api
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint, Build, Type-Check API
+        run: |
+          npm run lint
+          npm run build
+          npm run type-check
