@@ -7,74 +7,75 @@ on:
     branches: [main]
 
 jobs:
-  setup:
+  prepare:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22.*"
-
-      - name: Cache node modules
-        id: cache-npm
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-node-modules
-        with:
-          # npm キャッシュファイルは、Linux/macOS では `~/.npm` に保存される。
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
-      - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
-        name: List the state of node modules
-        continue-on-error: true
-        run: npm list
-
-      - name: Install dependencies
-        run: npm ci
 
       - name: Detect changed files
         id: detect-changes
         run: |
-          # mainブランチ（またはデフォルトブランチ）と現在のコミット（HEAD）との差分を取得
-          web_changed=$(git diff --name-only origin/main...HEAD | grep -E '^apps/web/' || echo "")
-          api_changed=$(git diff --name-only origin/main...HEAD | grep -E '^apps/api/' || echo "")
+          if git diff --name-only origin/main...HEAD | grep -qE '^apps/web/'; then
+             web_changed="true"
+           fi
+           if git diff --name-only origin/main...HEAD | grep -qE '^apps/api/'; then
+             api_changed="true"
+           fi
 
-          {
-            echo "web_changed<<EOF"
-            echo "$web_changed"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
-          {
-            echo "api_changed<<EOF"
-            echo "$api_changed"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
+           echo "web_changed=${web_changed}" >> $GITHUB_OUTPUT
+           echo "api_changed=${api_changed}" >> $GITHUB_OUTPUT
 
-      - name: Cache Next.js build
-        if: ${{ steps.detect-changes.outputs.web_changed != '' }}
-        id: cache-next
-        uses: actions/cache@v4
+  web-ci:
+    needs: prepare
+    runs-on: ubuntu-latest
+    if: ${{ needs.prepare.outputs.web_changed == 'true' }}
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          path: ${{ github.workspace }}/apps/web/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.ts', '**/*.tsx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+          node-version: 22
+          cache: "npm"
 
-      - name: Full Validation for Web
-        if: ${{ steps.detect-changes.outputs.web_changed != '' }}
-        run: |
-          npm run lint -w apps/web
-          npm run build -w apps/web
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Full Validation for Api
-        if: ${{ steps.detect-changes.outputs.api_changed != '' }}
+      - name: Lint, Build, Test & Type-Check Web
         run: |
-          npm run lint -w apps/api
-          npm run build -w apps/api
+          npm run lint
+          npm run build
+          npm run type-check
+
+  api-ci:
+    needs: prepare
+    runs-on: ubuntu-latest
+    if: ${{ needs.prepare.outputs.api_changed == 'true' }}
+    defaults:
+      run:
+        working-directory: apps/api
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint, Build, Test & Type-Check API
+        run: |
+          npm run lint
+          npm run build
+          npm run test
+          npm run type-check
