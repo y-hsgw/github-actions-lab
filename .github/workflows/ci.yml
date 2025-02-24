@@ -65,9 +65,10 @@ jobs:
 
       - name: Lint, Build, Type-Check Web
         run: |
-          time npm run lint
-          time npm run build
-          time npm run type-check
+          npm run lint &
+          npm run build &
+          npm run type-check
+          wait
 
   api-ci:
     needs: prepare
