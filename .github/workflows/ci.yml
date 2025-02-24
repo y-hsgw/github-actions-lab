@@ -22,13 +22,13 @@ jobs:
         run: |
           if git diff --name-only origin/main...HEAD | grep -qE '^apps/web/'; then
              web_changed="true"
-           fi
-           if git diff --name-only origin/main...HEAD | grep -qE '^apps/api/'; then
-             api_changed="true"
-           fi
+          fi
+          if git diff --name-only origin/main...HEAD | grep -qE '^apps/api/'; then
+            api_changed="true"
+          fi
 
-           echo "web_changed=${web_changed}" >> $GITHUB_OUTPUT
-           echo "api_changed=${api_changed}" >> $GITHUB_OUTPUT
+          echo "web_changed=${web_changed}" >> $GITHUB_OUTPUT
+          echo "api_changed=${api_changed}" >> $GITHUB_OUTPUT
 
           # デバッグ用
           echo "web_changed: ${web_changed}"
