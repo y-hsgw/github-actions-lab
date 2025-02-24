@@ -10,8 +10,8 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      web_changed: ${{ steps.detect_changes.outputs.web_changed }}
-      api_changed: ${{ steps.detect_changes.outputs.api_changed }}
+      web_changed: ${{ steps.detect-changes.outputs.web_changed }}
+      api_changed: ${{ steps.detect-changes.outputs.api_changed }}
     steps:
       - uses: actions/checkout@v4
         with:
