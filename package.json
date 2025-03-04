@@ -6,7 +6,9 @@
   "main": "index.js",
   "scripts": {
     "lint": "npm run lint -w apps",
-    "build": "npm run build -w apps"
+    "build": "npm run build -w apps",
+    "start": "npm run start -w apps/api & npm run start -w apps/web",
+    "dev": "npm run dev -w apps/api & npm run dev -w apps/web"
   },
   "keywords": [],
   "author": "",
@@ -15,7 +17,8 @@
   "workspaces": [
     "docs",
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "e2e"
   ],
   "devDependencies": {
     "@vitest/coverage-v8": "^3.0.6",
