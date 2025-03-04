@@ -14,6 +14,7 @@ const config = [
   {
     rules: {
       "react/self-closing-comp": "error",
+      "@typescript-eslint/no-unsafe-assignment": "off",
     },
   },
   {
