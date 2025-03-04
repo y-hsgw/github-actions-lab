@@ -5,8 +5,6 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
 jobs:
   test:
@@ -35,11 +33,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
-      - name: build
+      - name: Run Start Api
+        run: npm run start -w apps/api
+
+      - name: Run Build Web
         run: npm run build -w apps/web
 
-      - name: Run Start
-        run: npm run start
+      - name: Run Start Web
+        run: npm run start -w apps/web
 
       - name: Run Playwright tests
         run: npm run test:e2e -w e2e
