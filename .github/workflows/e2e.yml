@@ -39,11 +39,13 @@ jobs:
       - name: Run Api Start
         run: npm run start -w apps/api &
 
-      - name: Run Playwright tests
+      - name: Run Web Start
         run: |
           npm run build -w apps/web
-          npm run start -w apps/web
-          npm run test:e2e -w e2e
+          npm run start -w apps/web &
+
+      - name: Run Playwright tests
+        run: npm run test:e2e -w e2e
 
       - uses: actions/upload-artifact@v4
         if: always()
