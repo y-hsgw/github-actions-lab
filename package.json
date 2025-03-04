@@ -16,7 +16,8 @@
   "workspaces": [
     "docs",
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "e2e"
   ],
   "devDependencies": {
     "@vitest/coverage-v8": "^3.0.6",
