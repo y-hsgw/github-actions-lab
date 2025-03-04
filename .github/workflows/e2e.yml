@@ -5,8 +5,6 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
 jobs:
   test:
@@ -35,17 +33,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
-      - name: Run Start Api
-        run: npm run start -w apps/api
-
-      - name: Run Build Web
-        run: npm run build -w apps/web
-
-      - name: Run Start Web
-        run: npm run start -w apps/web
-
       - name: Run Playwright tests
-        run: npm run test:e2e -w e2e
+        run: |
+          npm run start -w apps/api
+          npm run build -w apps/web
+          npm run start -w apps/web
+          npm run test:e2e -w e2e
 
       - uses: actions/upload-artifact@v4
         if: always()
