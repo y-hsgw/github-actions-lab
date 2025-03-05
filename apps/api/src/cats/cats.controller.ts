@@ -12,6 +12,7 @@ import {
 import { CreateCatDto } from "./dto/create-cat.dto.js";
 import { CatsService } from "./cats.service.js";
 import { Cat } from "./interfaces/cat.interface.js";
+import { randomUUID } from "node:crypto";
 
 @Controller("cats")
 export class CatsController {
@@ -19,7 +20,13 @@ export class CatsController {
 
   @Post()
   create(@Body() createCatDto: CreateCatDto) {
-    this.catsService.create(createCatDto);
+    const newCat: Cat = {
+      age: createCatDto.age,
+      breed: createCatDto.breed,
+      name: createCatDto.name,
+      id: randomUUID(),
+    };
+    this.catsService.create(newCat);
   }
 
   @Get()
