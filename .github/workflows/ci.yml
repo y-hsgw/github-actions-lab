@@ -68,7 +68,7 @@ jobs:
           npm run lint &
           npm run build &
           npm run type-check
-          wait
+          wait || (echo "A command failed. Exiting with error." && exit 1)
 
   api-ci:
     needs: prepare
@@ -95,4 +95,4 @@ jobs:
           npm run lint &
           npm run build &
           npm run type-check
-          wait
+          wait || (echo "A command failed. Exiting with error." && exit 1)
