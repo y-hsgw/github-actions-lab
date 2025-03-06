@@ -44,68 +44,46 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Install
         uses: ./.github/actions/prepare-install
 
-  web-ci:
-    needs: prepare
+  web-static-test:
+    needs: [prepare, install]
     runs-on: ubuntu-latest
     if: ${{ needs.prepare.outputs.web_changed == 'true' }}
+    strategy:
+      matrix:
+        test: ["lint", "type-check"]
     defaults:
       run:
         working-directory: apps/web
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: "npm"
+      - name: Install
+        uses: ./.github/actions/prepare-install
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Run Test
+        run: npm run ${{ matrix.test }}
 
-      - name: Cache Next.js build
-        id: cache-next
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/apps/web/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
-
-      - name: Lint, Build, Type-Check Web
-        run: |
-          npm run lint &
-          npm run build &
-          npm run type-check
-          wait || (echo "A command failed. Exiting with error." && exit 1)
-
-  api-ci:
-    needs: prepare
+  api-static-test:
+    needs: [prepare, install]
     runs-on: ubuntu-latest
     if: ${{ needs.prepare.outputs.api_changed == 'true' }}
+    strategy:
+      matrix:
+        test: ["lint", "type-check"]
     defaults:
       run:
         working-directory: apps/api
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: "npm"
+      - name: Install
+        uses: ./.github/actions/prepare-install
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Lint, Build, Type-Check API
-        run: |
-          npm run lint &
-          npm run build &
-          npm run type-check
-          wait || (echo "A command failed. Exiting with error." && exit 1)
+      - name: Run Test
+        run: npm run ${{ matrix.test }}
