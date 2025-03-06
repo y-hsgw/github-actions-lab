@@ -1,6 +1,8 @@
 name: Prepare Install
+description: Prepare and install dependencies
 
 runs:
+  using: "composite"
   steps:
     - name: Set up Node.js
       uses: actions/setup-node@v4
@@ -9,4 +11,5 @@ runs:
         cache: "npm"
 
     - name: Install dependencies
+      shell: bash
       run: npm ci
