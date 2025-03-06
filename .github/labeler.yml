@@ -1,11 +1,15 @@
 api:
-  - change-files:
-      - any-glob-to-any-file apps/api/**
+  - changed-files:
+      - any-glob-to-any-file: apps/api/**
 
 web:
-  - change-files:
-      - any-glob-to-any-file apps/web/**
+  - changed-files:
+      - any-glob-to-any-file: apps/web/**
 
 docs:
-  - change-files:
-      - any-glob-to-any-file docs/**
+  - changed-files:
+      - any-glob-to-any-file: docs/**
+
+e2e:
+  - changed-files:
+      - any-glob-to-any-file: e2e/**
