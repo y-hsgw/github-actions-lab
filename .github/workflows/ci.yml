@@ -38,6 +38,15 @@ jobs:
           echo "web_changed: ${web_changed}"
           echo "api_changed: ${api_changed}"
 
+  install:
+    name: Checkout and Install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install
+        uses: ./.github/actions/prepare-install.yml
+
   web-ci:
     needs: prepare
     runs-on: ubuntu-latest
