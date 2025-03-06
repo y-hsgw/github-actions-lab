@@ -9,3 +9,7 @@ web:
 docs:
   - changed-files:
       - any-glob-to-any-file: docs/**
+
+e2e:
+  - changed-files:
+      - any-glob-to-any-file: e2e/**
