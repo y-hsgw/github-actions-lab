@@ -11,7 +11,7 @@ import {
 } from "@nestjs/common";
 import { CreateCatDto } from "./dto/create-cat.dto.js";
 import { CatsService } from "./cats.service.js";
-import { Cat } from "./interfaces/cat.interface.js";
+import { type Cat } from "./interfaces/cat.interface.js";
 import { randomUUID } from "node:crypto";
 
 @Controller("cats")

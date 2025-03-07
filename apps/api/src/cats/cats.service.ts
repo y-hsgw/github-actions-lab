@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Cat } from "./interfaces/cat.interface.js";
+import { type Cat } from "./interfaces/cat.interface.js";
 import { randomUUID } from "node:crypto";
 
 @Injectable()

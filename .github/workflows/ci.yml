@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   prepare:
     runs-on: ubuntu-latest
@@ -34,65 +38,52 @@ jobs:
           echo "web_changed: ${web_changed}"
           echo "api_changed: ${api_changed}"
 
-  web-ci:
-    needs: prepare
+  install:
+    name: Checkout and Install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install
+        uses: ./.github/actions/prepare-install
+
+  web-static-test:
+    needs: [prepare, install]
     runs-on: ubuntu-latest
     if: ${{ needs.prepare.outputs.web_changed == 'true' }}
+    strategy:
+      matrix:
+        test: ["lint", "type-check"]
     defaults:
       run:
         working-directory: apps/web
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: "npm"
+      - name: Install
+        uses: ./.github/actions/prepare-install
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Run Test
+        run: npm run ${{ matrix.test }}
 
-      - name: Cache Next.js build
-        id: cache-next
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/apps/web/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
-
-      - name: Lint, Build, Type-Check Web
-        run: |
-          npm run lint &
-          npm run build &
-          npm run type-check
-          wait
-
-  api-ci:
-    needs: prepare
+  api-static-test:
+    needs: [prepare, install]
     runs-on: ubuntu-latest
     if: ${{ needs.prepare.outputs.api_changed == 'true' }}
+    strategy:
+      matrix:
+        test: ["lint", "type-check"]
     defaults:
       run:
         working-directory: apps/api
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: "npm"
+      - name: Install
+        uses: ./.github/actions/prepare-install
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Lint, Build, Type-Check API
-        run: |
-          npm run lint &
-          npm run build &
-          npm run type-check
-          wait
+      - name: Run Test
+        run: npm run ${{ matrix.test }}
