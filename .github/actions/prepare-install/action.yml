@@ -4,6 +4,10 @@ description: Prepare and install dependencies
 runs:
   using: "composite"
   steps:
+    - name: echo github.ref
+      shell: bash
+      run: echo ${{ github.ref }}
+
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
