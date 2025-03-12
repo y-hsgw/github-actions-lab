@@ -61,19 +61,6 @@ jobs:
       - name: Run Test
         run: npm run ${{ matrix.test }}
 
-  web-static-test-results:
-    if: ${{ always() }}
-    runs-on: ubuntu-latest
-    needs: [web-static-test]
-    steps:
-      - run: |
-          result="${{ needs.web-static-test.result }}"
-          if [[ $result == "success" || $result == "skipped" ]]; then
-            exit 0
-          else
-            exit 1
-          fi
-
   api-static-test:
     needs: [prepare]
     runs-on: ubuntu-latest
@@ -94,15 +81,15 @@ jobs:
       - name: Run Test
         run: npm run ${{ matrix.test }}
 
-  api-static-test-results:
+  static-test-results:
     if: ${{ always() }}
     runs-on: ubuntu-latest
-    needs: [api-static-test]
+    needs: [api-static-test, web-static-test]
     steps:
-      - run: |
-          result="${{ needs.api-static-test.result }}"
-          if [[ $result == "success" || $result == "skipped" ]]; then
-            exit 0
-          else
-            exit 1
-          fi
+      - run: exit 1
+        if: >-
+          ${{
+            contains(needs.*.result, 'failure')
+            || contains(needs.*.result, 'cancelled')
+            || contains(needs.*.result, 'skipped')
+          }}
