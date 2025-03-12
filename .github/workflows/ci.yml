@@ -50,7 +50,7 @@ jobs:
     defaults:
       run:
         working-directory: apps/web
-    if: ${{ needs.prepare.outputs.web_changed == "true" }}
+    if: ${{ needs.prepare.outputs.web_changed == 'true' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -70,7 +70,7 @@ jobs:
     defaults:
       run:
         working-directory: apps/api
-    if: ${{ needs.prepare.outputs.api_changed == "true" }}
+    if: ${{ needs.prepare.outputs.api_changed == 'true' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
