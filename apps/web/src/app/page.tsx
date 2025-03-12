@@ -11,8 +11,11 @@ interface Cat {
 }
 
 export default async function Page() {
-  const data = await fetch("http://localhost:8080/cats");
-  const cats: Cat[] = await data.json();
+  const res = await fetch("http://localhost:8080/cats", {
+    // TODO: APIがデプロイされたら削除予定
+    cache: "no-store",
+  });
+  const cats: Cat[] = await res.json();
 
   return (
     <div>
