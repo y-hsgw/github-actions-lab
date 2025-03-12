@@ -13,5 +13,3 @@ export const useDisclosure = (initialIsOpen = false) => {
 
   return { isOpen, open, close };
 };
-
-const a = 1;
