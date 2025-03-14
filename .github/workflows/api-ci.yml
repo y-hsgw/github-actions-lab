@@ -2,11 +2,11 @@ name: API CI
 
 on:
   push:
-    branches: [main]
     paths:
       - "apps/api/**"
       - "packages/eslint-config/**"
       - "package.json"
+    branches: [main]
   pull_request:
     paths:
       - "apps/api/**"
@@ -22,7 +22,6 @@ jobs:
   test:
     needs: [prepare]
     runs-on: ubuntu-latest
-    if: ${{ needs.prepare.outputs.web_changed == 'true' }}
     strategy:
       matrix:
         test: ["lint", "type-check"]
