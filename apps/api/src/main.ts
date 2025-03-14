@@ -16,3 +16,5 @@ async function bootstrap() {
 bootstrap().catch((err: unknown) => {
   console.error("Error during bootstrap:", err);
 });
+
+const aa = 1;
