@@ -1,0 +1,38 @@
+name: Web CI
+
+on:
+  push:
+    paths:
+      - "apps/web/**"
+      - "packages/eslint-config/**"
+      - "package.json"
+    branches: [main]
+  pull_request:
+    paths:
+      - "apps/web/**"
+      - "packages/eslint-config/**"
+      - "package.json"
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test: ["lint", "type-check"]
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install
+        uses: ./.github/actions/prepare-install
+
+      - name: Run Test
+        run: npm run ${{ matrix.test }}
