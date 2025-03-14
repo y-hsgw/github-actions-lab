@@ -11,6 +11,8 @@
     "dev": "nest start --watch",
     "build": "nest build",
     "lint": "eslint",
+    "test": "vitest",
+    "test:ci": "vitest run",
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {
@@ -18,9 +20,11 @@
     "@nestjs/platform-fastify": "^11.0.10",
     "@nestjs/schematics": "^11.0.1",
     "@repo/eslint-config": "^1.0.0",
+    "@swc/core": "^1.11.9",
     "@types/node": "^22.13.4",
     "eslint": "^9.20.1",
     "typescript": "^5.8.2",
+    "unplugin-swc": "^1.5.1",
     "vitest": "^3.0.6"
   },
   "dependencies": {
