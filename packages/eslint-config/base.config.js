@@ -1,8 +1,8 @@
 // @ts-check
 
-import eslint from '@eslint/js';
-import tseslint from 'typescript-eslint';
-import vitest from '@vitest/eslint-plugin';
+import eslint from "@eslint/js";
+import tseslint from "typescript-eslint";
+import vitest from "@vitest/eslint-plugin";
 
 export default tseslint.config(
   eslint.configs.recommended,
@@ -15,8 +15,8 @@ export default tseslint.config(
       },
     },
     rules: {
-      '@typescript-eslint/no-unused-vars': [
-        'error',
+      "@typescript-eslint/no-unused-vars": [
+        "error",
         {
           ignoreRestSiblings: true,
         },
@@ -24,13 +24,13 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/__tests__/**'],
+    files: ["**/__tests__/**"],
     plugins: {
       vitest,
     },
     rules: {
       ...vitest.configs.recommended.rules,
-      'vitest/consistent-test-it': ['error', { fn: 'it' }],
+      "vitest/consistent-test-it": ["error", { fn: "it" }],
     },
     settings: {
       vitest: {
@@ -45,7 +45,7 @@ export default tseslint.config(
   },
   {
     linterOptions: {
-      reportUnusedDisableDirectives: 'error',
+      reportUnusedDisableDirectives: "error",
     },
-  },
+  }
 );
