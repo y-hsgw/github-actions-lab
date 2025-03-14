@@ -8,6 +8,10 @@ on:
       - "packages/eslint-config/**"
       - "package.json"
   pull_request:
+    paths:
+      - "apps/api/**"
+      - "packages/eslint-config/**"
+      - "package.json"
     branches: [main]
 
 concurrency:
