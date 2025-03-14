@@ -7,3 +7,5 @@ export default defineProject({
     globals: true,
   },
 });
+
+const aa = 1;
