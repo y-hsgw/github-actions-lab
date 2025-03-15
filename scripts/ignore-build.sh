@@ -1,5 +1,7 @@
 #!/bin/bash
 echo "Checking for changes in apps/web and package.json..."
+echo "CACHED_COMMIT_REF: $CACHED_COMMIT_REF"
+echo "COMMIT_REF: $COMMIT_REF"
 git diff --name-only $CACHED_COMMIT_REF $COMMIT_REF apps/web ./package.json
 if git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF apps/web ./package.json; then
   echo "No changes detected in apps/web or package.json, skipping build."
