@@ -18,15 +18,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+defaults:
+  run:
+    working-directory: apps/api
+
 jobs:
-  api-test:
+  api-type-check:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        test: ["lint", "type-check"]
-    defaults:
-      run:
-        working-directory: apps/api
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,4 +33,16 @@ jobs:
         uses: ./.github/actions/prepare-install
 
       - name: Run Test
-        run: npm run ${{ matrix.test }}
+        run: npm run type-check
+
+  api-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install
+        uses: ./.github/actions/prepare-install
+
+      - name: Run Test
+        run: npm run lint
