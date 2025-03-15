@@ -1,5 +1,5 @@
-name: Prepare Install
-description: Prepare and install dependencies
+name: Prepare Npm Install
+description: Prepare and npm install dependencies
 
 runs:
   using: "composite"
