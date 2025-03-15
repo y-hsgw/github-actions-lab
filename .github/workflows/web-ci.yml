@@ -2,16 +2,8 @@ name: Web CI
 
 on:
   push:
-    paths:
-      - "apps/web/**"
-      - "packages/eslint-config/**"
-      - "package.json"
     branches: [main]
   pull_request:
-    paths:
-      - "apps/web/**"
-      - "packages/eslint-config/**"
-      - "package.json"
     branches: [main]
 
 concurrency:
@@ -23,7 +15,21 @@ defaults:
     working-directory: apps/web
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      web: ${{ steps.filter.outputs.web }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            web:
+              - 'apps/web/**'
   web-build:
+    if: ${{ needs.changes.outputs.web == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -45,6 +51,7 @@ jobs:
         run: npm run build
 
   web-lint:
+    if: ${{ needs.changes.outputs.web == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
