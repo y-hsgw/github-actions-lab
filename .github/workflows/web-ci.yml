@@ -18,15 +18,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+defaults:
+  run:
+    working-directory: apps/web
+
 jobs:
-  test:
+  web-build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        test: ["lint", "type-check"]
-    defaults:
-      run:
-        working-directory: apps/web
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,5 +32,26 @@ jobs:
       - name: Install
         uses: ./.github/actions/prepare-install
 
-      - name: Run Test
-        run: npm run ${{ matrix.test }}
+      - name: Cache Next.js build
+        id: cache-next
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/apps/web/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+
+      - name: Run Lint
+        run: npm run build
+
+  web-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install
+        uses: ./.github/actions/prepare-install
+
+      - name: Run Lint
+        run: npm run lint
