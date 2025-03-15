@@ -23,7 +23,7 @@ defaults:
     working-directory: apps/web
 
 jobs:
-  build:
+  web-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -44,7 +44,7 @@ jobs:
       - name: Run Lint
         run: npm run build
 
-  lint:
+  web-lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
