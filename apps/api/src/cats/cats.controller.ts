@@ -16,7 +16,11 @@ import { randomUUID } from "node:crypto";
 
 @Controller("cats")
 export class CatsController {
-  constructor(private catsService: CatsService) {}
+  private catsService: CatsService;
+
+  constructor(catsService: CatsService) {
+    this.catsService = catsService;
+  }
 
   @Post()
   create(@Body() createCatDto: CreateCatDto) {
