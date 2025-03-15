@@ -19,6 +19,7 @@
     "@nestjs/cli": "^11.0.4",
     "@nestjs/platform-fastify": "^11.0.10",
     "@nestjs/schematics": "^11.0.1",
+    "@nestjs/testing": "^11.0.11",
     "@repo/eslint-config": "^1.0.0",
     "@swc/core": "^1.11.9",
     "@types/node": "^22.13.4",

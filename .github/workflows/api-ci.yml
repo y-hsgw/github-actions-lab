@@ -2,31 +2,37 @@ name: API CI
 
 on:
   push:
-    paths:
-      - "apps/api/**"
-      - "packages/eslint-config/**"
-      - "package.json"
     branches: [main]
   pull_request:
-    paths:
-      - "apps/api/**"
-      - "packages/eslint-config/**"
-      - "package.json"
     branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+defaults:
+  run:
+    working-directory: apps/api
+
 jobs:
-  api-test:
+  changes:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        test: ["lint", "type-check"]
-    defaults:
-      run:
-        working-directory: apps/api
+    permissions:
+      pull-requests: read
+    outputs:
+      api: ${{ steps.filter.outputs.api }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            api:
+              - 'apps/api/**'
+
+  api-type-check:
+    needs: changes
+    if: ${{ needs.changes.outputs.api == 'true' }}
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,4 +41,18 @@ jobs:
         uses: ./.github/actions/prepare-install
 
       - name: Run Test
-        run: npm run ${{ matrix.test }}
+        run: npm run type-check
+
+  api-lint:
+    needs: changes
+    if: ${{ needs.changes.outputs.api == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install
+        uses: ./.github/actions/prepare-install
+
+      - name: Run Test
+        run: npm run lint
