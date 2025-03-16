@@ -1,2 +1,2 @@
 [build]
-  ignore = "git diff --name-only $CACHED_COMMIT_REF $COMMIT_REF | tee /dev/stderr | grep -q '^apps/web/'"
+  ignore = "echo 'Changed files:' && git diff --name-only $CACHED_COMMIT_REF $COMMIT_REF && git diff --name-only $CACHED_COMMIT_REF $COMMIT_REF | grep -q '^apps/web/'"
