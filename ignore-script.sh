@@ -1,7 +1,17 @@
 #!/bin/bash
 echo "CACHED_COMMIT_REF: $CACHED_COMMIT_REF"
 echo "COMMIT_REF: $COMMIT_REF"
-git diff --quiet "$CACHED_COMMIT_REF" "$COMMIT_REF" -- apps/web
-result=$?
-echo "Git diff result: $result"
-exit $result
+
+echo git diff --name-only "$CACHED_COMMIT_REF" "$COMMIT_REF"
+
+CHANGES=$(git diff --name-only "$CACHED_COMMIT_REF" "$COMMIT_REF" | grep "^apps/web/")
+
+
+if [ -z "$CHANGES" ]; then
+  echo "No changes in apps/api-1 directory, skipping build"
+  exit 0
+else
+  echo "Changes detected in apps/api-1 directory:"
+  echo "$CHANGES"
+  exit 1
+fi
