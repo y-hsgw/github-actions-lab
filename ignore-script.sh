@@ -2,9 +2,11 @@
 echo "CACHED_COMMIT_REF: $CACHED_COMMIT_REF"
 echo "COMMIT_REF: $COMMIT_REF"
 
-echo git diff --name-only "$CACHED_COMMIT_REF" "$COMMIT_REF"
+echo "Changed files:"
+git diff --name-only "$CACHED_COMMIT_REF" "$COMMIT_REF"
 
-CHANGES=$(git diff --name-only "$CACHED_COMMIT_REF" "$COMMIT_REF" | grep "^apps/web/")
+
+CHANGES=$(git diff --name-only "$CACHED_COMMIT_REF" "$COMMIT_REF" | grep "^apps/web")
 
 
 if [ -z "$CHANGES" ]; then
