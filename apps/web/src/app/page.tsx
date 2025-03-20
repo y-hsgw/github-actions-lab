@@ -26,6 +26,7 @@ export default async function Page() {
           <li key={cat.name}>
             <p>name: {cat.name}</p>
             <p>age: {cat.age}</p>
+            <p>bread: {cat.bread}</p>
           </li>
         ))}
       </ul>
