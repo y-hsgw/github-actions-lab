@@ -6,6 +6,11 @@ on:
       - "docs/**"
     branches:
       - main
+  pull_request:
+    paths:
+      - "docs/**"
+    branches:
+      - main
 
 jobs:
   build:
@@ -45,3 +50,5 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Show deployed URL
+        run: echo Deployed URL ${{ steps.deployment.outputs.page_url }}
