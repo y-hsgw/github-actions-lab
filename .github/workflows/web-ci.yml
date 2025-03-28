@@ -64,5 +64,12 @@ jobs:
       - name: Install
         uses: ./.github/actions/prepare-install
 
+      - name: cache eslint
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/apps/web/.eslintcache
+          key: ${{ runner.os }}-eslint-${{ hashFiles('**/package-lock.json','${{ github.workspace }}/apps/web/eslint.config.js') }}
+          restore-keys: ${{ runner.os }}-eslint-
+
       - name: Run Lint
         run: npm run lint
