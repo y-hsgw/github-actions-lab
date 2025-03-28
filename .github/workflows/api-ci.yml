@@ -63,7 +63,7 @@ jobs:
           key: ${{ runner.os }}-eslint-${{ hashFiles('**/package-lock.json','${{ github.workspace }}/apps/api/eslint.config.js') }}
           restore-keys: ${{ runner.os }}-eslint-
 
-      - name: Run Test
+      - name: Run Lint
         run: npm run lint
 
   api-test:
