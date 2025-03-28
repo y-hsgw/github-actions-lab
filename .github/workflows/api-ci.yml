@@ -59,7 +59,7 @@ jobs:
       - name: Install
         uses: ./.github/actions/prepare-install
 
-      - name: cache eslint
+      - name: Cache Eslint
         uses: actions/cache@v4
         with:
           path: ${{ env.API_ROOT_DIR }}/.eslintcache

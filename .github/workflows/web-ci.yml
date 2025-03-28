@@ -53,7 +53,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
-      - name: Run Lint
+      - name: Run Build
         run: npm run build
 
   web-lint:
@@ -67,7 +67,7 @@ jobs:
       - name: Install
         uses: ./.github/actions/prepare-install
 
-      - name: cache eslint
+      - name: Cache Eslint
         uses: actions/cache@v4
         with:
           path: ${{ env.WEB_ROOT_DIR }}/.eslintcache
