@@ -14,6 +14,9 @@ defaults:
   run:
     working-directory: apps/web
 
+env:
+  WEB_ROOT_DIR: ${{ github.workspace }}/apps/web
+
 jobs:
   changes:
     runs-on: ubuntu-latest
@@ -45,12 +48,12 @@ jobs:
         id: cache-next
         uses: actions/cache@v4
         with:
-          path: ${{ github.workspace }}/apps/web/.next/cache
+          path: ${{ env.WEB_ROOT_DIR }}/.next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
-      - name: Run Lint
+      - name: Run Build
         run: npm run build
 
   web-lint:
@@ -63,6 +66,12 @@ jobs:
 
       - name: Install
         uses: ./.github/actions/prepare-install
+
+      - name: Cache Eslint
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.WEB_ROOT_DIR }}/.eslintcache
+          key: ${{ runner.os }}-eslint-${{ hashFiles('**/package-lock.json','${{ env.WEB_ROOT_DIR }}/eslint.config.js') }}
 
       - name: Run Lint
         run: npm run lint
