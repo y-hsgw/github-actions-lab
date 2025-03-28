@@ -14,6 +14,9 @@ defaults:
   run:
     working-directory: apps/api
 
+env:
+  API_ROOT_DIR: ${{ github.workspace }}/apps/api
+
 jobs:
   changes:
     runs-on: ubuntu-latest
@@ -59,8 +62,8 @@ jobs:
       - name: cache eslint
         uses: actions/cache@v4
         with:
-          path: ${{ github.workspace }}/apps/api/.eslintcache
-          key: ${{ runner.os }}-eslint-${{ hashFiles('**/package-lock.json','${{ github.workspace }}/apps/api/eslint.config.js') }}
+          path: ${{ env.API_ROOT_DIR }}/.eslintcache
+          key: ${{ runner.os }}-eslint-${{ hashFiles('**/package-lock.json','${{ env.API_ROOT_DIR }}/eslint.config.js') }}
 
       - name: Run Lint
         run: npm run lint
