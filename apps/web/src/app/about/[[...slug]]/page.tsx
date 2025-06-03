@@ -1,10 +1,21 @@
+import { Metadata } from "next";
 import Link from "next/link";
 
-export default async function Page({
-  params,
-}: {
+interface Props {
   params: Promise<{ slug?: string[] }>;
-}) {
+}
+
+export const generateMetadata = async ({
+  params,
+}: Props): Promise<Metadata> => {
+  const { slug } = await params;
+
+  return {
+    title: Array.isArray(slug) ? slug.join("/") : "slugがない",
+  };
+};
+
+export default async function Page({ params }: Props) {
   const { slug } = await params;
   return (
     <div>
